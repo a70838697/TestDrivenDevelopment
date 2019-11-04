@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello_world_en">Hello world!</string>
+    <string name="hello_world_cn">世界，你好！</string>
+</resources>
