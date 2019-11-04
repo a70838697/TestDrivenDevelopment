@@ -53,7 +53,7 @@ public class BookListMainActivityTest {
                             isDisplayed()));
             imageView.check(matches(hasDrawableResource(listBooks.get(iLoop).getCoverResourceId())));
 
-            //if(iLoop==2)continue;
+            //if(iLoop==2)continue;因为没显示完全导致不能测第三条的文本
             ViewInteraction textView = onView(
                     allOf(withId(R.id.text_view_book_title),
                             childAtPosition(
@@ -64,7 +64,7 @@ public class BookListMainActivityTest {
                             isDisplayed()));
             textView.check(matches(withText(listBooks.get(iLoop).getTitle())));
         }
-
+    /*
         DataInteraction linearLayout3 = onData(anything())
                 .inAdapterView(allOf(withId(R.id.list_view_books),
                         childAtPosition(
@@ -72,6 +72,7 @@ public class BookListMainActivityTest {
                                 0)))
                 .atPosition(1);
         linearLayout3.perform(click());
+        */
     }
 
     private static Matcher<View> childAtPosition(
