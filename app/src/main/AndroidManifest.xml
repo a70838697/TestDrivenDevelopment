@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AddToListActivity"></activity>
+        <activity android:name=".EditBookActivity"></activity>
+        <activity android:name=".AddToListActivity" />
         <activity android:name=".AddToMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

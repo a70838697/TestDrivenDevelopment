@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -18,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -27,7 +30,9 @@ public class BookListMainActivity extends AppCompatActivity {
 
     public static final int CONTEXT_MENU_DELETE = 1;
     public static final int CONTEXT_MENU_NEW = CONTEXT_MENU_DELETE + 1;
-    public static final int CONTEXT_MENU_ABOUT = CONTEXT_MENU_NEW + 1;
+    public static final int CONTEXT_MENU_NEW_EDIT = CONTEXT_MENU_NEW + 1;
+    public static final int CONTEXT_MENU_UPDATE = CONTEXT_MENU_NEW_EDIT + 1;
+    public static final int CONTEXT_MENU_ABOUT = CONTEXT_MENU_UPDATE + 1;
     private List<Book> listBooks = new ArrayList<>();
     ListView listViewBooks;
     BookAdapter bookAdapter;
@@ -57,7 +62,32 @@ public class BookListMainActivity extends AppCompatActivity {
             //设置内容 参数1为分组，参数2对应条目的id，参数3是指排列顺序，默认排列即可
             menu.add(0, CONTEXT_MENU_DELETE, 0, "删除");
             menu.add(0, CONTEXT_MENU_NEW, 0, "添加");
+            menu.add(0, CONTEXT_MENU_UPDATE, 0, "编辑");
+            menu.add(0, CONTEXT_MENU_NEW_EDIT, 0, "新编");
             menu.add(0, CONTEXT_MENU_ABOUT, 0, "关于...");
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 901:
+                if (resultCode == RESULT_OK) {
+                    String title = data.getStringExtra("book_name");
+                    int insertPosition = data.getIntExtra("position", 0);
+                    getListBooks().add(insertPosition, new Book(title, R.drawable.book_no_name));
+                    bookAdapter.notifyDataSetChanged();
+                }
+                break;
+            case 902:
+                if (resultCode == RESULT_OK) {
+                    int insertPosition = data.getIntExtra("position", 0);
+                    Book bookAtPosition = getListBooks().get(insertPosition);
+                    bookAtPosition.setTitle(data.getStringExtra("book_name"));
+                    bookAdapter.notifyDataSetChanged();
+                }
+                break;
         }
     }
 
@@ -87,6 +117,18 @@ public class BookListMainActivity extends AppCompatActivity {
                 final int insertPosition = ((AdapterView.AdapterContextMenuInfo) item.getMenuInfo()).position;
                 getListBooks().add(insertPosition, new Book("无名书籍", R.drawable.book_no_name));
                 bookAdapter.notifyDataSetChanged();
+                break;
+            case CONTEXT_MENU_NEW_EDIT:
+                Intent intent=new Intent(BookListMainActivity.this, EditBookActivity.class);
+                intent.putExtra("position",((AdapterView.AdapterContextMenuInfo) item.getMenuInfo()).position);
+                BookListMainActivity.this.startActivityForResult(intent,901);
+                break;
+            case CONTEXT_MENU_UPDATE:
+                int updatePosition = ((AdapterView.AdapterContextMenuInfo) item.getMenuInfo()).position;
+                Intent intent2=new Intent(BookListMainActivity.this, EditBookActivity.class);
+                intent2.putExtra("position",updatePosition);
+                intent2.putExtra("book_name",getListBooks().get(updatePosition).getTitle());
+                BookListMainActivity.this.startActivityForResult(intent2,902);
                 break;
             case CONTEXT_MENU_ABOUT:
                 Toast.makeText(BookListMainActivity.this, "图书列表v1.0,coded by casper", Toast.LENGTH_LONG).show();
