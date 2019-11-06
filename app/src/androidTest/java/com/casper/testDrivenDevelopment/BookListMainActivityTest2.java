@@ -213,7 +213,7 @@ public class BookListMainActivityTest2 {
                         isDisplayed()))
                 .perform(longClick());
 
-        /*出现删除菜单*/
+        /*显示并点击删除菜单*/
         onView(allOf(withId(android.R.id.title), withText("删除"), isDisplayed()))
                 .perform(click());
 
@@ -238,6 +238,14 @@ public class BookListMainActivityTest2 {
         onView(allOf(withId(R.id.text_view_book_title), withText(testText)))
                 .check(
                 doesNotExist());
+
+
+        try {
+            Thread.sleep(1000);
+        }catch(InterruptedException e2){  }
+        onView(withText("删除成功"))
+                .inRoot(withDecorView(not(mActivityTestRule.getActivity().getWindow().getDecorView())))
+                .check(matches(isDisplayed()));
 
         Assert.assertNotEquals(testText,listBooks.get(0).getTitle());
         Assert.assertNotEquals(resourceId,listBooks.get(0).getCoverResourceId());
