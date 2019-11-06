@@ -1,9 +1,10 @@
 package com.casper.testDrivenDevelopment;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class Book {
+public class Book implements Serializable {
     private String title;
     private String press="";
     private String isbn="";
