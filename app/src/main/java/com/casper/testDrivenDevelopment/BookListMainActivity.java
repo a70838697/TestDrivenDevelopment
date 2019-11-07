@@ -33,7 +33,6 @@ public class BookListMainActivity extends AppCompatActivity {
     public static final int CONTEXT_MENU_NEW_EDIT = CONTEXT_MENU_NEW + 1;
     public static final int CONTEXT_MENU_UPDATE = CONTEXT_MENU_NEW_EDIT + 1;
     public static final int CONTEXT_MENU_ABOUT = CONTEXT_MENU_UPDATE + 1;
-    private List<Book> listBooks = new ArrayList<>();
     ListView listViewBooks;
     BookAdapter bookAdapter;
 
@@ -58,7 +57,7 @@ public class BookListMainActivity extends AppCompatActivity {
             //获取适配器
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             //设置标题
-            menu.setHeaderTitle(listBooks.get(info.position).getTitle());
+            menu.setHeaderTitle(getListBooks().get(info.position).getTitle());
             //设置内容 参数1为分组，参数2对应条目的id，参数3是指排列顺序，默认排列即可
             menu.add(0, CONTEXT_MENU_DELETE, 0, "删除");
             menu.add(0, CONTEXT_MENU_NEW, 0, "添加");
@@ -102,7 +101,7 @@ public class BookListMainActivity extends AppCompatActivity {
                         .setIcon(R.drawable.ic_launcher_foreground)
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                listBooks.remove(removePosition);
+                                getListBooks().remove(removePosition);
                                 bookAdapter.notifyDataSetChanged();
                                 Toast.makeText(BookListMainActivity.this, "删除成功", Toast.LENGTH_LONG).show();
                             }
@@ -137,14 +136,25 @@ public class BookListMainActivity extends AppCompatActivity {
         return super.onContextItemSelected(item);
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        bookSaver.save();
+    }
+
+    BookSaver bookSaver;
     private void init() {
-        getListBooks().add(new Book("软件项目管理案例教程（第4版）", R.drawable.book_2));
-        getListBooks().add(new Book("创新工程实践", R.drawable.book_no_name));
-        getListBooks().add(new Book("信息安全数学基础（第2版）", R.drawable.book_1));
+        bookSaver=new BookSaver(this);
+        bookSaver.load();
+        if(getListBooks().size()==0) {
+            getListBooks().add(new Book("软件项目管理案例教程（第4版）", R.drawable.book_2));
+            getListBooks().add(new Book("创新工程实践", R.drawable.book_no_name));
+            getListBooks().add(new Book("信息安全数学基础（第2版）", R.drawable.book_1));
+        }
     }
 
     public List<Book> getListBooks() {
-        return listBooks;
+        return bookSaver.getBooks();
     }
 
     class BookAdapter extends ArrayAdapter<Book> {

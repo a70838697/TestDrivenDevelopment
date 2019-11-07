@@ -1,6 +1,7 @@
 package com.casper.testDrivenDevelopment;
 
 
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -16,11 +17,14 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsInstanceOf;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -46,9 +50,37 @@ import static org.hamcrest.Matchers.not;
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class BookListMainActivityTest3 {
-
     @Rule
     public ActivityTestRule<BookListMainActivity> mActivityTestRule = new ActivityTestRule<>(BookListMainActivity.class);
+    ArrayList<Book> listBooksBackup;
+
+    @Before
+    public void setup()
+    {
+        listBooksBackup=new ArrayList<Book>();
+        List<Book> listBooks = mActivityTestRule.getActivity().getListBooks();
+        for (Book book:listBooks) {
+            Book book1=new Book(book.getTitle(),book.getCoverResourceId());
+            listBooksBackup.add(book1);
+        }
+        listBooks.clear();
+        listBooks.add(new Book("软件项目管理案例教程（第4版）", R.drawable.book_2));
+        listBooks.add(new Book("创新工程实践", R.drawable.book_no_name));
+        listBooks.add(new Book("信息安全数学基础（第2版）", R.drawable.book_1));
+        mActivityTestRule.finishActivity();
+        mActivityTestRule.launchActivity(new Intent());
+    }
+    @After
+    public void tearDown() throws InterruptedException {
+        List<Book> listBooks = mActivityTestRule.getActivity().getListBooks();
+        listBooks.clear();
+        for (Book book:listBooksBackup) {
+            Book book1=new Book(book.getTitle(),book.getCoverResourceId());
+            listBooks.add(book1);
+        }
+        Thread.sleep(1000);
+        mActivityTestRule.finishActivity();
+    }
 
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
@@ -119,8 +151,7 @@ public class BookListMainActivityTest3 {
                 .check(doesNotExist());
 
         /*第insertPosition个对象长按*/
-        ViewInteraction linearLayout = onView(
-                allOf(childAtPosition(
+        onView(allOf(childAtPosition(
                         withId(R.id.list_view_books),
                         insertPosition),
                         isDisplayed()))
