@@ -4,12 +4,13 @@ import android.content.Context;
 
 import androidx.test.core.app.ApplicationProvider;
 
+import com.casper.testDrivenDevelopment.data.Book;
+import com.casper.testDrivenDevelopment.data.BookSaver;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class BookSaverTest {
     private BookSaver bookKeeper;

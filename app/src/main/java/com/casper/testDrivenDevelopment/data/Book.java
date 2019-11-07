@@ -1,4 +1,4 @@
-package com.casper.testDrivenDevelopment;
+package com.casper.testDrivenDevelopment.data;
 
 import java.io.Serializable;
 import java.util.Date;

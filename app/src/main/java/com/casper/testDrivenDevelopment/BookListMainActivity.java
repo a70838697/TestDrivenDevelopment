@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -15,13 +14,21 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
+import com.casper.testDrivenDevelopment.data.Book;
+import com.casper.testDrivenDevelopment.data.BookFragmentAdapter;
+import com.casper.testDrivenDevelopment.data.BookSaver;
+import com.casper.testDrivenDevelopment.view.ListFragment;
+import com.casper.testDrivenDevelopment.view.WebFragment;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +40,6 @@ public class BookListMainActivity extends AppCompatActivity {
     public static final int CONTEXT_MENU_NEW_EDIT = CONTEXT_MENU_NEW + 1;
     public static final int CONTEXT_MENU_UPDATE = CONTEXT_MENU_NEW_EDIT + 1;
     public static final int CONTEXT_MENU_ABOUT = CONTEXT_MENU_UPDATE + 1;
-    ListView listViewBooks;
     BookAdapter bookAdapter;
 
     @Override
@@ -42,18 +48,30 @@ public class BookListMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_book_list_main);
 
         init();
-        listViewBooks = this.findViewById(R.id.list_view_books);
 
         bookAdapter = new BookAdapter(BookListMainActivity.this, R.layout.list_view_item_book, getListBooks());
-        listViewBooks.setAdapter(bookAdapter);
 
-        this.registerForContextMenu(listViewBooks);
+        BookFragmentAdapter myPageAdapter = new BookFragmentAdapter(getSupportFragmentManager());
+        ArrayList<Fragment> datas = new ArrayList<Fragment>();
+        datas.add(new ListFragment(bookAdapter));
+        datas.add(new WebFragment());
+        myPageAdapter.setData(datas);
+
+        ArrayList<String> titles = new ArrayList<String>();
+        titles.add("图书");
+        titles.add("新闻");
+        myPageAdapter.setTitles(titles);
+
+        TabLayout tabLayout = findViewById(R.id.tablayout);
+        ViewPager viewPager = findViewById(R.id.view_pager);
+        viewPager.setAdapter(myPageAdapter);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        if (v == listViewBooks) {
+        if (v == this.findViewById(R.id.list_view_books)) {
             //获取适配器
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             //设置标题
@@ -157,7 +175,7 @@ public class BookListMainActivity extends AppCompatActivity {
         return bookSaver.getBooks();
     }
 
-    class BookAdapter extends ArrayAdapter<Book> {
+    public class BookAdapter extends ArrayAdapter<Book> {
 
         private int resourceId;
 
