@@ -70,7 +70,7 @@ public class BookListMainActivityTest6BaiduMap {
 
         ViewInteraction viewGroup = onView(
                 allOf(withId(R.id.bmap_view),
-                        Matchers.<View>instanceOf(com.baidu.mapapi.map.MapView.class),
+                        Matchers.<View>instanceOf(com.baidu.mapapi.map.TextureMapView.class),
                         childAtPosition(
                                 withParent(withId(R.id.view_pager)),
                                 0),

@@ -26,7 +26,9 @@ import androidx.viewpager.widget.ViewPager;
 import com.casper.testDrivenDevelopment.data.Book;
 import com.casper.testDrivenDevelopment.data.BookFragmentAdapter;
 import com.casper.testDrivenDevelopment.data.BookSaver;
+import com.casper.testDrivenDevelopment.view.GameFragment;
 import com.casper.testDrivenDevelopment.view.ListFragment;
+import com.casper.testDrivenDevelopment.view.MapFragment;
 import com.casper.testDrivenDevelopment.view.WebFragment;
 import com.google.android.material.tabs.TabLayout;
 
@@ -56,12 +58,14 @@ public class BookListMainActivity extends AppCompatActivity {
         datas.add(new ListFragment(bookAdapter));
         datas.add(new WebFragment());
         datas.add(new MapFragment());
+        datas.add(new GameFragment());
         myPageAdapter.setData(datas);
 
         ArrayList<String> titles = new ArrayList<String>();
         titles.add("图书");
         titles.add("新闻");
         titles.add("卖家");
+        titles.add("游戏");
         myPageAdapter.setTitles(titles);
 
         TabLayout tabLayout = findViewById(R.id.tablayout);
