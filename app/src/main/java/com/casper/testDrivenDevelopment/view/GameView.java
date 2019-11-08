@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -17,6 +18,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder surfaceHolder;
     private DrawThread drawThread;
     private ArrayList<Sprite> sprites = new ArrayList<>();
+    private int xTouch=-1,yTouch=-1,count=0;
 
     public GameView(Context context) {
         super(context);
@@ -49,6 +51,23 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    public boolean onTouchEvent(MotionEvent event) {
+        float npx = event.getX();
+        float npy = event.getY();
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                break;
+            case MotionEvent.ACTION_MOVE:
+                break;
+            case MotionEvent.ACTION_UP:
+                this.xTouch=(int)npx;
+                this.yTouch=(int)npy;
+                break;
+        }
+        return true;
+    }
+
+
     private class DrawThread extends Thread {
         private boolean beAlive = false;
 
@@ -76,10 +95,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                         Paint paint = new Paint();
                         paint.setTextSize(50);
                         paint.setColor(Color.BLACK);
-                        canvas.drawText("Hello", 40, 40, paint);
+                        canvas.drawText("击中"+count+"个", 40, 40, paint);
                         for (int i = 0; i < sprites.size(); i++) sprites.get(i).move();
                         for (int i = 0; i < sprites.size(); i++) sprites.get(i).draw(canvas);
 
+                        GameView.this.xTouch=-1;
+                        GameView.this.yTouch=-1;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -104,19 +125,34 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         public Sprite(int resouceId) {
             this.resouceId = resouceId;
+            RandomInit();
+        }
+
+        private void RandomInit() {
             x = (int) (Math.random() * getWidth());
             y = (int) (Math.random() * getHeight());
             direction = Math.random() * 2 * Math.PI;
         }
 
         public void move() {
-            x += 15 * Math.cos(direction);
-            if (x < 0) x = getWidth();
-            else if (x > getWidth()) x = 0;
-            y += 15 * Math.sin(direction);
-            if (y < 0) y = getHeight();
-            else if (y > getHeight()) y = 0;
-            if (Math.random() < 0.05) direction = Math.random() * 2 * Math.PI;
+            Drawable drawable = getContext().getResources().getDrawable(this.resouceId);
+            Rect drawableRect = new Rect(x, y, x + drawable.getIntrinsicWidth(), y + drawable.getIntrinsicHeight());
+            if(drawableRect.contains(GameView.this.xTouch,GameView.this.yTouch))
+            {
+                GameView.this.count++;
+                RandomInit();
+            }
+            else {
+
+                x += 15 * Math.cos(direction);
+                if (x < 0) x = getWidth();
+                else if (x > getWidth()) x = 0;
+                y += 15 * Math.sin(direction);
+                if (y < 0) y = getHeight();
+                else if (y > getHeight()) y = 0;
+                if (Math.random() < 0.05) direction = Math.random() * 2 * Math.PI;
+            }
+
         }
 
         public void draw(Canvas canvas) {
