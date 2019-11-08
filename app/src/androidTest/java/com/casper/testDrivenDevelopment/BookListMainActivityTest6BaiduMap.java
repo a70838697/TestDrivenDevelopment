@@ -9,8 +9,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 
+import com.baidu.mapapi.map.MapView;
+import com.google.android.material.tabs.TabLayout;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,29 +38,39 @@ public class BookListMainActivityTest6BaiduMap {
     public ActivityTestRule<BookListMainActivity> mActivityTestRule = new ActivityTestRule<>(BookListMainActivity.class);
 
     @Test
-    public void listViewMainActivityTest2() {
-        ViewInteraction tabView = onView(
-                allOf(withContentDescription("卖家"),
+    public void BookListMainActivityTest6BaiduMap() {
+        onView(
+                allOf(withText("卖家"),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(R.id.tablayout),
-                                        0),
-                                2),
-                        isDisplayed()));
-        tabView.perform(click());
+                                        childAtPosition(
+                                                allOf(
+                                                        Matchers.<View>instanceOf(TabLayout.class),
+                                                        withId(R.id.tablayout)
+                                                ),
+                                                0),
+                                        2),
+                                1),
+                        isDisplayed())
+        ).check(matches(withText("卖家")));
 
-        ViewInteraction tabView2 = onView(
+        onView(
                 allOf(withContentDescription("卖家"),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(R.id.tablayout),
+                                        allOf(
+                                                Matchers.<View>instanceOf(TabLayout.class),
+                                                withId(R.id.tablayout)
+                                        ),
                                         0),
                                 2),
-                        isDisplayed()));
-        tabView2.perform(click());
+                        isDisplayed())
+        ).perform(click());
+
 
         ViewInteraction viewGroup = onView(
                 allOf(withId(R.id.bmap_view),
+                        Matchers.<View>instanceOf(com.baidu.mapapi.map.MapView.class),
                         childAtPosition(
                                 withParent(withId(R.id.view_pager)),
                                 0),
@@ -68,19 +82,10 @@ public class BookListMainActivityTest6BaiduMap {
                         childAtPosition(
                                 childAtPosition(
                                         withId(R.id.bmap_view),
-                                        1),
-                                0),
+                                        3),
+                                1),
                         isDisplayed()));
         textView.check(matches(withText(" 100米 ")));
-
-        ViewInteraction imageView = onView(
-                allOf(childAtPosition(
-                        childAtPosition(
-                                withId(R.id.bmap_view),
-                                1),
-                        2),
-                        isDisplayed()));
-        imageView.check(matches(isDisplayed()));
     }
 
     private static Matcher<View> childAtPosition(

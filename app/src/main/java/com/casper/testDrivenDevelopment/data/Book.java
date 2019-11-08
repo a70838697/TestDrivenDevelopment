@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class Book implements Serializable {
+public class  Book implements Serializable {
     private String title;
     private String press="";
     private String isbn="";
